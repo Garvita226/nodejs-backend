@@ -8,6 +8,7 @@ import { uploadToCloudinary } from "../utils/cloudinary.js";
 const registerUser = asyncHandler( async (req, res) => {
     // get user data from frontend
     const {fullname, email, username, password} = req.body;
+    // console.log(req.files);
     
 
     // validation
@@ -26,15 +27,25 @@ const registerUser = asyncHandler( async (req, res) => {
         throw new ApiError(409, "username or email already exists");
     }
 
-    const avatarLocalPath = req.files?.avatar[0]?.path;
-    const coverImageLocalPath = req.files?.coverImage[0]?.path;
+    let avatarLocalPath;
+    let coverImageLocalPath;
+
+    if (req.files && Array.isArray(req.files.avatar) && req.files.avatar.length > 0) {
+        avatarLocalPath = req.files?.avatar[0]?.path;
+    }
+
+    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+        coverImageLocalPath = req.files?.coverImage[0]?.path;
+    }
+
 
     if (!avatarLocalPath) {
         throw new ApiError(400, "Avatar file is required");
     }
 
-    const avatar = uploadToCloudinary(avatarLocalPath);
-    const coverImage = uploadToCloudinary(coverImageLocalPath);
+    // console.log(avatarLocalPath)
+    const avatar = await uploadToCloudinary(avatarLocalPath);
+    const coverImage = await uploadToCloudinary(coverImageLocalPath);
 
     if (!avatar) {
         throw new ApiError(400, "Avatar file is required");
