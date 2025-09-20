@@ -21,14 +21,15 @@ router.route("/register").post(
 
 router.route("/login").post(loginUser);
 router.route("/refresh-token").post(refreshAccessToken);
-router.route("/get-user").post(getCurrentUser);
 
 // Secured routes
 router.route("/logout").post(verifyJWT, logoutUser);
 router.route("/change-password").post(verifyJWT, changeCurrentPassword);
-router.route("/update-account-details").post(verifyJWT, updateAccountDetails);
-router.route("/update-avatar").post(verifyJWT, updateUserAvatar);
-router.route("/update-coverImage").post(verifyJWT, updateUserCoverImage);
+router.route("/get-user").get(verifyJWT, getCurrentUser);
+router.route("/update-account").patch(verifyJWT, updateAccountDetails);
+
+router.route("/update-avatar").patch(verifyJWT, upload.single("avatar"), updateUserAvatar);
+router.route("/update-coverImage").patch(verifyJWT, upload.single("coverImage"), updateUserCoverImage);
 
 
 export default router;
